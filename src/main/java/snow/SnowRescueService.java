@@ -18,26 +18,31 @@ public class SnowRescueService {
 	}
 
 	public void checkForecastAndRescue() {
-		if(weatherForecastService.getAverageTemperatureInCelsius() < 0 ) {
+		if(isSanderToBeSent()) {
 			municipalServices.sendSander();
 		}
-		if (weatherForecastService.getSnowFallHeightInMM() > 10) {
-			sendSnowplows(3);
-		} else if (weatherForecastService.getSnowFallHeightInMM() > 5) {
-			sendSnowplows(2);
-		} else if (weatherForecastService.getSnowFallHeightInMM() > 3) {
-			sendSnowplows(1);
-		}
-		if(weatherForecastService.getAverageTemperatureInCelsius() < -10 && weatherForecastService.getSnowFallHeightInMM() > 10) {
+		sendSnowplows(getNumberOfSnowplowsAccordingToSnowfall());
+		if(isPressServiceToBeInvolved()) {
 			pressService.sendWeatherAlert();
 		}
+	}
+
+	private int getNumberOfSnowplowsAccordingToSnowfall() {
+		return new SnowplowSendingStrategy().getNumberOfSnowplows(weatherForecastService.getSnowFallHeightInMM());
+	}
+
+	private boolean isSanderToBeSent() {
+		return weatherForecastService.getAverageTemperatureInCelsius() < 0;
+	}
+
+	private boolean isPressServiceToBeInvolved() {
+		return weatherForecastService.getAverageTemperatureInCelsius() < -10 && weatherForecastService.getSnowFallHeightInMM() > 10;
 	}
 
 	private void sendSnowplows(int numberOfSnowplows) {
 		for(int snowplow = 0; snowplow < numberOfSnowplows; snowplow++) {
 			sendSnowplow();
 		}
-
 	}
 
 	private void sendSnowplow() {
