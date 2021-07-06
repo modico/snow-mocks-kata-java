@@ -31,8 +31,6 @@ public class SnowRescueServiceTest {
         verify(municipalServices).sendSander();
     }
 
-
-
     @Test
     public void sends_snowplow_when_snowfall_is_over_three_mm() {
         givenSnowfall(4);
@@ -41,8 +39,6 @@ public class SnowRescueServiceTest {
 
         verify(municipalServices).sendSnowplow();
     }
-
-
 
     @Test
     public void sends_another_snowplow_in_case_of_first_snowplow_malfunction() {
